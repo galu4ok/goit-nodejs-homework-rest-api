@@ -6,7 +6,7 @@ const {
   updateContact,
 } = require("../models/contacts");
 
-const contactSchema = require("../schemas/contactValidation");
+// const contactSchema = require("../schemas/contactValidation");
 
 const { ctrlWrapper, HttpError } = require("../helpers");
 
@@ -25,14 +25,14 @@ const contactById = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
-  const { error } = contactSchema.validate(req.body, { abortEarly: false });
+  // const { error } = contactSchema.validate(req.body, { abortEarly: false });
 
-  if (typeof error !== "undefined") {
-    throw HttpError(
-      400,
-      `missing required name field: ${error.details.map((err) => err.message).join(", ")}`
-    );
-  }
+  // if (typeof error !== "undefined") {
+  //   throw HttpError(
+  //     400,
+  //     `missing required name field: ${error.details.map((err) => err.message).join(", ")}`
+  //   );
+  // }
   const result = await addContact(req.body);
   res.status(201).json(result);
 };
@@ -46,14 +46,14 @@ const deleteContact = async (req, res) => {
   res.status(200).json({ message: "contact deleted" });
 };
 const updContact = async (req, res) => {
-  const { error } = contactSchema.validate(req.body, { abortEarly: false });
+  // const { error } = contactSchema.validate(req.body, { abortEarly: false });
 
-  if (typeof error !== "undefined") {
-    throw HttpError(
-      400,
-      `missing required name field: ${error.details.map((err) => err.message).join(", ")}`
-    );
-  }
+  // if (typeof error !== "undefined") {
+  //   throw HttpError(
+  //     400,
+  //     `missing required name field: ${error.details.map((err) => err.message).join(", ")}`
+  //   );
+  // }
   const { contactId } = req.params;
   const result = await updateContact(contactId, req.body);
   if (!result) {

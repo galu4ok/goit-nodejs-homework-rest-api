@@ -8,17 +8,8 @@ const {
   updContact,
 } = require("../../controllers/contacts");
 
-// const {
-//   listContacts,
-//   getContactById,
-//   addContact,
-//   removeContact,
-//   updateContact,
-// } = require("../../models/contacts");
-
-// const contactSchema = require("../../schemas/contactValidation");
-
-// const { HttpError } = require("../../helpers");
+const validateBody = require("../../middlewares");
+const schemas = require("../../schemas/contactValidation");
 
 const router = express.Router();
 
@@ -26,10 +17,10 @@ router.get("/", listOfContacts);
 
 router.get("/:contactId", contactById);
 
-router.post("/", createContact);
+router.post("/", validateBody(schemas.contactSchema), createContact);
 
 router.delete("/:contactId", deleteContact);
 
-router.put("/:contactId", updContact);
+router.put("/:contactId", validateBody(schemas.contactSchema), updContact);
 
 module.exports = router;
