@@ -1,25 +1,90 @@
-const express = require('express')
+const express = require("express");
 
-const router = express.Router()
+const {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
+  updateContact,
+} = require("../../models/contacts");
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const contactSchema = require("../../schemas/contactValidation");
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const { HttpError } = require("../../helpers");
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const router = express.Router();
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/", async (__, res, next) => {
+  try {
+    const result = await listContacts();
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/:contactId", async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const result = await getContactById(contactId);
+    if (!result) {
+      throw HttpError(404, "Not found");
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
 
-module.exports = router
+router.post("/", async (req, res, next) => {
+  try {
+    const { error } = contactSchema.validate(req.body, { abortEarly: false });
+
+    if (typeof error !== "undefined") {
+      throw HttpError(
+        400,
+        `missing required name field: ${error.details.map((err) => err.message).join(", ")}`
+      );
+    }
+    const result = await addContact(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:contactId", async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const result = await removeContact(contactId);
+    if (!result) {
+      throw HttpError(404, "Not found");
+    }
+    res.status(200).json({ message: "contact deleted" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/:contactId", async (req, res, next) => {
+  try {
+    const { error } = contactSchema.validate(req.body, { abortEarly: false });
+
+    if (typeof error !== "undefined") {
+      throw HttpError(
+        400,
+        `missing required name field: ${error.details.map((err) => err.message).join(", ")}`
+      );
+    }
+    const { contactId } = req.params;
+    const result = await updateContact(contactId, req.body);
+    if (!result) {
+      throw HttpError(404, "Not found");
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = router;
