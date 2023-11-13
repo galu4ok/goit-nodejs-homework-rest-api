@@ -4,23 +4,28 @@ const {
   listOfContacts,
   contactById,
   createContact,
+  updateContact,
   deleteContact,
-  updContact,
 } = require("../../controllers/contacts");
 
-const validateBody = require("../../middlewares");
+const { validateBody, isValidId } = require("../../middlewares");
 const schemas = require("../../schemas/contactValidation");
 
 const router = express.Router();
 
+// Get all contacts
 router.get("/", listOfContacts);
 
-router.get("/:contactId", contactById);
+// Get contact by ID
+router.get("/:contactId", isValidId, contactById);
 
+// Create a contact
 router.post("/", validateBody(schemas.contactSchema), createContact);
 
-router.delete("/:contactId", deleteContact);
+// Update a contact
+router.put("/:contactId", isValidId, validateBody(schemas.contactSchema), updateContact);
 
-router.put("/:contactId", validateBody(schemas.contactSchema), updContact);
+// Delete a contact
+router.delete("/:contactId", isValidId, deleteContact);
 
 module.exports = router;
