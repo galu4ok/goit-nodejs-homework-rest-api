@@ -9,7 +9,7 @@ const {
 } = require("../../controllers/contacts");
 
 const { validateBody, isValidId } = require("../../middlewares");
-const schemas = require("../../schemas/contactValidation");
+const { schemas } = require("../../models/contact");
 
 const router = express.Router();
 
@@ -20,10 +20,10 @@ router.get("/", listOfContacts);
 router.get("/:contactId", isValidId, contactById);
 
 // Create a contact
-router.post("/", validateBody(schemas.contactSchema), createContact);
+router.post("/", validateBody(schemas.addSchema), createContact);
 
 // Update a contact
-router.put("/:contactId", isValidId, validateBody(schemas.contactSchema), updateContact);
+router.put("/:contactId", isValidId, validateBody(schemas.addSchema), updateContact);
 
 // Delete a contact
 router.delete("/:contactId", isValidId, deleteContact);

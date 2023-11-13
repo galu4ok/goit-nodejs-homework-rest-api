@@ -1,7 +1,6 @@
-const Contact = require("../models/contact");
+const { Contact } = require("../models/contact");
 
 const { ctrlWrapper, HttpError } = require("../helpers");
-const { findByIdAndUpdate } = require("../models/contact");
 
 const listOfContacts = async (__, res) => {
   const result = await Contact.find().exec();
