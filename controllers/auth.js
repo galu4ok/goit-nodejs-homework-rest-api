@@ -44,9 +44,6 @@ const loginUser = async (req, res) => {
   };
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" }); // token expires in 24 hours
 
-  // const decodeToken = jwt.decode(token);
-  // console.log(decodeToken);
-
   res.status(200).json({ token, user: { email: user.email, subscription: user.subscription } });
 };
 module.exports = { registerUser: ctrlWrapper(registerUser), loginUser: ctrlWrapper(loginUser) };
