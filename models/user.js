@@ -42,7 +42,12 @@ const registerSchema = Joi.object({
 
 const loginSchema = Joi.object({
   password: Joi.string().min(6).required(),
-  email: Joi.string().pattern(emailRegexp).required(),
+  email: Joi.string()
+    .pattern(emailRegexp)
+    .messages({
+      "string.pattern.base": "Email must be in the valid format example@example.com",
+    })
+    .required(),
 });
 
 const schemas = {

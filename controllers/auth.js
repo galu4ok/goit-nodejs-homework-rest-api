@@ -1,8 +1,11 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const { User } = require("../models/user");
 
 const { ctrlWrapper, HttpError } = require("../helpers");
+
+const { JWT_SECRET } = process.env;
 
 // Registration
 
@@ -20,4 +23,30 @@ const registerUser = async (req, res) => {
   res.status(201).json({ user: { email: newUser.email, subscription: newUser.subscription } });
 };
 
-module.exports = { registerUser: ctrlWrapper(registerUser) };
+// Login
+
+const loginUser = async (req, res) => {
+  const { password, email } = req.body;
+  const user = await User.findOne({ email }).exec();
+
+  if (user === null) {
+    throw HttpError(401, "Email or password is wrong");
+  }
+
+  const passwordCompare = await bcrypt.compare(password, user.password);
+
+  if (passwordCompare === false) {
+    throw HttpError(401, "Email or password is wrong");
+  }
+
+  const payload = {
+    id: user._id,
+  };
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" }); // token expires in 24 hours
+
+  // const decodeToken = jwt.decode(token);
+  // console.log(decodeToken);
+
+  res.status(200).json({ token, user: { email: user.email, subscription: user.subscription } });
+};
+module.exports = { registerUser: ctrlWrapper(registerUser), loginUser: ctrlWrapper(loginUser) };
