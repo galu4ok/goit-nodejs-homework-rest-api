@@ -19,6 +19,10 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -33,6 +37,7 @@ const addSchema = Joi.object({
     .messages({ "string.pattern.base": `Phone number must be in the valid format (###) ###-####.` })
     .required(),
   favorite: Joi.boolean(),
+  owner: Joi.string(),
 });
 
 const updateFavoriteSchema = Joi.object({
