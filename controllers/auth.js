@@ -65,9 +65,29 @@ const getCurrentUser = async (req, res) => {
   res.status(200).json({ email, subscription });
 };
 
+// Subscription
+
+const subscribeUser = async (req, res) => {
+  const { _id } = req.user;
+  const { subscription } = req.body;
+
+  const updatedUser = await User.findByIdAndUpdate(_id, { subscription }, { new: true }).exec();
+  if (updatedUser === null) {
+    throw HttpError(404);
+  }
+
+  res.status(200).json({
+    user: {
+      email: updatedUser.email,
+      subscription: updatedUser.subscription,
+    },
+  });
+};
+
 module.exports = {
   registerUser: ctrlWrapper(registerUser),
   loginUser: ctrlWrapper(loginUser),
   logoutUser: ctrlWrapper(logoutUser),
   getCurrentUser: ctrlWrapper(getCurrentUser),
+  subscribeUser: ctrlWrapper(subscribeUser),
 };

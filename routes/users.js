@@ -1,6 +1,12 @@
 const express = require("express");
 
-const { registerUser, loginUser, logoutUser, getCurrentUser } = require("../controllers/auth");
+const {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getCurrentUser,
+  subscribeUser,
+} = require("../controllers/auth");
 
 const { validateBody, authenticate } = require("../middlewares");
 const { schemas } = require("../models/user");
@@ -19,5 +25,9 @@ router.post("/logout", parseJSON, authenticate, logoutUser);
 
 // Current user
 router.get("/current", parseJSON, authenticate, getCurrentUser);
+
+// Update a user subscription
+
+router.patch("/", parseJSON, authenticate, validateBody(schemas.subscriptionSchema), subscribeUser);
 
 module.exports = router;
