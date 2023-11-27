@@ -44,6 +44,23 @@ const loginUser = async (req, res) => {
   };
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" }); // token expires in 24 hours
 
+  await User.findByIdAndUpdate(user._id, { token }).exec();
+
   res.status(200).json({ token, user: { email: user.email, subscription: user.subscription } });
 };
-module.exports = { registerUser: ctrlWrapper(registerUser), loginUser: ctrlWrapper(loginUser) };
+
+// Logout
+
+const logoutUser = async (req, res) => {
+  const { _id } = req.user;
+  await User.findByIdAndUpdate(_id, { token: null }).exec();
+  res.status(204).json({
+    message: "Logout success",
+  });
+};
+
+module.exports = {
+  registerUser: ctrlWrapper(registerUser),
+  loginUser: ctrlWrapper(loginUser),
+  logoutUser: ctrlWrapper(logoutUser),
+};
