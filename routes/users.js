@@ -1,9 +1,9 @@
 const express = require("express");
 
-const { registerUser, loginUser, logoutUser, getCurrent } = require("../../controllers/auth");
+const { registerUser, loginUser, logoutUser, getCurrentUser } = require("../controllers/auth");
 
-const { validateBody, authenticate } = require("../../middlewares");
-const { schemas } = require("../../models/user");
+const { validateBody, authenticate } = require("../middlewares");
+const { schemas } = require("../models/user");
 
 const router = express.Router();
 const parseJSON = express.json();
@@ -18,6 +18,6 @@ router.post("/login", parseJSON, validateBody(schemas.loginSchema), loginUser);
 router.post("/logout", parseJSON, authenticate, logoutUser);
 
 // Current user
-router.get("/current", parseJSON, authenticate, getCurrent);
+router.get("/current", parseJSON, authenticate, getCurrentUser);
 
 module.exports = router;

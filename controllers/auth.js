@@ -60,7 +60,7 @@ const logoutUser = async (req, res) => {
 };
 
 // Current user
-const getCurrent = async (req, res) => {
+const getCurrentUser = async (req, res) => {
   const { email, subscription } = req.user;
   res.status(200).json({ email, subscription });
 };
@@ -69,5 +69,5 @@ module.exports = {
   registerUser: ctrlWrapper(registerUser),
   loginUser: ctrlWrapper(loginUser),
   logoutUser: ctrlWrapper(logoutUser),
-  getCurrent: ctrlWrapper(getCurrent),
+  getCurrentUser: ctrlWrapper(getCurrentUser),
 };
