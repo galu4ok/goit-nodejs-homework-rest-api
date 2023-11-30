@@ -6,9 +6,10 @@ const {
   logoutUser,
   getCurrentUser,
   subscribeUser,
+  uploadAvatar,
 } = require("../controllers/auth");
 
-const { validateBody, authenticate } = require("../middlewares");
+const { validateBody, authenticate, upload } = require("../middlewares");
 const { schemas } = require("../models/user");
 
 const router = express.Router();
@@ -27,7 +28,9 @@ router.post("/logout", parseJSON, authenticate, logoutUser);
 router.get("/current", parseJSON, authenticate, getCurrentUser);
 
 // Update a user subscription
-
 router.patch("/", parseJSON, authenticate, validateBody(schemas.subscriptionSchema), subscribeUser);
+
+// Upload user avatar
+router.patch("/avatars", parseJSON, authenticate, upload.single("avatar"), uploadAvatar);
 
 module.exports = router;
