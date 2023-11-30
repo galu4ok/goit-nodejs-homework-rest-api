@@ -95,10 +95,11 @@ const subscribeUser = async (req, res) => {
 
 // Upload avatar
 const uploadAvatar = async (req, res) => {
+  if (!req.file) throw HttpError(400, "Avatar must be uploaded");
+
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
-
-  if (req.file === undefined) throw HttpError(404, "Avatar not found");
+  console.log(req.file);
 
   // Зміна розміру аватарки
   const avatar = await Jimp.read(tempUpload);
