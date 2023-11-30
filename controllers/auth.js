@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { User } = require("../models/user");
+const gravatar = require("gravatar");
 
 const { ctrlWrapper, HttpError } = require("../helpers");
 
@@ -19,7 +20,9 @@ const registerUser = async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 10);
 
-  const newUser = await User.create({ ...req.body, password: passwordHash });
+  const avatarURL = gravatar.url(email);
+
+  const newUser = await User.create({ ...req.body, password: passwordHash, avatarURL });
   res.status(201).json({ user: { email: newUser.email, subscription: newUser.subscription } });
 };
 
@@ -60,6 +63,7 @@ const logoutUser = async (req, res) => {
 };
 
 // Current user
+
 const getCurrentUser = async (req, res) => {
   const { email, subscription } = req.user;
   res.status(200).json({ email, subscription });
