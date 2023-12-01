@@ -9,9 +9,9 @@ const Jimp = require("jimp");
 
 const { User } = require("../models/user");
 
-const { ctrlWrapper, HttpError } = require("../helpers");
+const { ctrlWrapper, HttpError, sendEmail } = require("../helpers");
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, BASE_URL } = process.env;
 
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 
@@ -36,6 +36,15 @@ const registerUser = async (req, res) => {
     avatarURL,
     verificationToken,
   });
+
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<p>Please verify you email by clicking on the <a target="_blanc" href="${BASE_URL}/users/verify/${verificationToken}">link</a></p>`,
+    text: "Click verify email",
+  };
+  await sendEmail(verifyEmail);
+
   res.status(201).json({ user: { email: newUser.email, subscription: newUser.subscription } });
 };
 
@@ -68,6 +77,9 @@ const loginUser = async (req, res) => {
 
   if (user === null) {
     throw HttpError(401, "Email or password is wrong");
+  }
+  if (!user.verify) {
+    throw HttpError(401, "Email not verified");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
