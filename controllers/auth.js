@@ -41,7 +41,7 @@ const registerUser = async (req, res) => {
     to: email,
     subject: "Verify email",
     html: `<p>Please verify you email by clicking on the <a target="_blanc" href="${BASE_URL}/users/verify/${verificationToken}">link</a></p>`,
-    text: "Click verify email",
+    text: `Please verify you email by opening the link http://${BASE_URL}/users/verify/${verificationToken}`,
   };
   await sendEmail(verifyEmail);
 
@@ -66,6 +66,33 @@ const verifyEmail = async (req, res) => {
 
   res.status(200).json({
     message: "Verification successful",
+  });
+};
+
+// Resend email for verification
+
+const resendVerifyEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email }).exec();
+
+  if (user === null) {
+    throw HttpError(401, "Email not found");
+  }
+
+  if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<p>Please verify you email by clicking on the <a target="_blanc" href="${BASE_URL}/users/verify/${user.verificationToken}">link</a></p>`,
+    text: `Please verify you email by opening the link http://${BASE_URL}/users/verify/${user.verificationToken}`,
+  };
+  await sendEmail(verifyEmail);
+
+  res.status(200).json({
+    message: "Verification email sent",
   });
 };
 
@@ -161,6 +188,7 @@ const uploadAvatar = async (req, res) => {
 module.exports = {
   registerUser: ctrlWrapper(registerUser),
   verifyEmail: ctrlWrapper(verifyEmail),
+  resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
   loginUser: ctrlWrapper(loginUser),
   logoutUser: ctrlWrapper(logoutUser),
   getCurrentUser: ctrlWrapper(getCurrentUser),

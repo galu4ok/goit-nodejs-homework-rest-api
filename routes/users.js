@@ -3,6 +3,7 @@ const express = require("express");
 const {
   registerUser,
   verifyEmail,
+  resendVerifyEmail,
   loginUser,
   logoutUser,
   getCurrentUser,
@@ -21,6 +22,8 @@ router.post("/register", parseJSON, validateBody(schemas.registerSchema), regist
 
 // Verification
 router.get("/verify/:verificationToken", parseJSON, verifyEmail);
+
+router.post("/verify", parseJSON, validateBody(schemas.emailSchema), resendVerifyEmail);
 
 // Login a user
 router.post("/login", parseJSON, validateBody(schemas.loginSchema), loginUser);
